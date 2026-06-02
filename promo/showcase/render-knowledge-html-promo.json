@@ -1,0 +1,64 @@
+{
+  "title": "Render Knowledge HTML",
+  "subtitle": "把 Codex 的知识清单、学习路线、工具对比和复盘总结，变成简约高级的交互式 HTML 展示页。",
+  "tags": ["codex-skill", "html", "knowledge", "showcase", "open-source"],
+  "sections": [
+    {
+      "title": "它解决的问题",
+      "tags": ["problem", "presentation"],
+      "items": [
+        {"text": "Codex 输出很有价值，但纯文本不适合直接展示。", "tags": ["problem"]},
+        {"text": "团队汇报、课程讲义、客户演示，需要更清晰的层级和视觉节奏。", "tags": ["presentation"]},
+        {"text": "这个 skill 把回答沉淀成可打开、可分享、可打印的网页资产。", "tags": ["asset"]}
+      ]
+    },
+    {
+      "title": "真实交互",
+      "tags": ["interaction", "single-file"],
+      "items": [
+        {"text": "搜索：长清单也能快速定位重点。", "tags": ["search"]},
+        {"text": "标签筛选：按主题、阶段、场景拆开复杂知识。", "tags": ["filter"]},
+        {"text": "折叠分区：演示时逐段展开。", "tags": ["collapse"]},
+        {"text": "进度勾选：学习路径和行动清单可跟进。", "tags": ["checklist"]},
+        {"text": "复制条目：展示后快速拿走具体句子。", "tags": ["copy"]},
+        {"text": "打印样式：HTML 也能变成会议讲义。", "tags": ["print"]}
+      ]
+    },
+    {
+      "title": "输入与输出",
+      "tags": ["markdown", "json", "offline"],
+      "items": [
+        {"text": "支持 Markdown：适合日常把 Codex 回答直接整理成页面。", "tags": ["markdown"]},
+        {"text": "支持 JSON：适合结构化内容、测试和批量复用。", "tags": ["json"]},
+        {"text": "输出是单个 HTML 文件：不需要服务器，不依赖 CDN。", "tags": ["offline"]}
+      ]
+    },
+    {
+      "title": "开源使用",
+      "tags": ["github", "install"],
+      "items": [
+        {"text": "仓库：github.com/imerzzhu/codex-render-knowledge-html-skill", "tags": ["github"]},
+        {"text": "本地安装：复制 skills/render-knowledge-html 到 Codex skills 目录。", "tags": ["install"]},
+        {"text": "调用：Use $render-knowledge-html to turn this checklist into a polished interactive HTML showcase.", "tags": ["prompt"]}
+      ]
+    },
+    {
+      "title": "一句话宣传",
+      "tags": ["tagline", "bilingual"],
+      "items": [
+        {"text": "别让好答案停在聊天框里。", "tags": ["zh"]},
+        {"text": "Turn useful Codex answers into interactive showcase pages.", "tags": ["en"]},
+        {"text": "一个 skill，让知识清单直接变成发布级 HTML。", "tags": ["douyin"]}
+      ]
+    }
+  ],
+  "sources": [
+    {"label": "GitHub: codex-render-knowledge-html-skill", "url": "https://github.com/imerzzhu/codex-render-knowledge-html-skill"},
+    {"label": "OpenAI Codex Skills", "url": "https://developers.openai.com/codex/skills"}
+  ],
+  "actions": [
+    "Open the HTML page in a browser.",
+    "Capture 1080x1920 screenshots for Douyin graphic posts.",
+    "Use $render-knowledge-html in a fresh Codex thread."
+  ]
+}

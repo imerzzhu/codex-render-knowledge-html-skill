@@ -5,9 +5,11 @@ Use these rules when generating or revising the `presentation-longform` HTML out
 ## Visual Direction
 
 - Build an editorial long page for presentation and reading, not a dashboard.
-- Use a strong first viewport with the title and subtitle, then let the user scroll into the content.
-- Keep the palette balanced: dark ink, warm accent, teal action color, restrained gold labels, and light paper surfaces.
-- Avoid decorative blobs, stock-like backgrounds, and card-heavy landing-page composition.
+- Default to a premium minimalist international UI style: Swiss editorial hierarchy, strong typography, disciplined spacing, and quiet product controls.
+- Use a light paper canvas with black ink, thin lines, restrained copper accents, and teal only for interaction/state.
+- Use a strong first viewport with the title, subtitle, and compact metadata. The first screen should feel like a designed publication cover, not a generic SaaS hero.
+- Avoid decorative blobs, heavy gradients, dark tech backgrounds, stock-like backgrounds, fake metrics, and card-heavy landing-page composition.
+- Treat the HTML itself as the product screenshot: real search, tags, checklist, copy, and print controls should be visible and refined.
 
 ## Layout
 
@@ -16,6 +18,8 @@ Use these rules when generating or revising the `presentation-longform` HTML out
 - Mobile layout: single column, table of contents above content, no horizontal scrolling.
 - Fixed-format controls such as search fields, buttons, checkboxes, and tag chips must not resize the layout unexpectedly.
 - Use `overflow-wrap: anywhere` or equivalent on user text so long words and URLs cannot break the page.
+- Prefer thin borders and small shadows over thick panels. Cards can frame content, but they should read as refined paper surfaces, not dense dashboard tiles.
+- Maintain generous vertical rhythm. If a page feels busy, reduce decoration before reducing whitespace.
 
 ## Interaction
 
@@ -44,6 +48,13 @@ The page must work from a local `file://` URL without a server.
 - Keep section cards from breaking awkwardly when possible.
 - Use black text on white background for print.
 - Do not depend on background images or external fonts.
+
+## Promo Screenshot Rules
+
+- For Douyin/Xiaohongshu-style graphic promotion, capture real rendered HTML at `1080x1920`.
+- Do not fake the product surface in a separate mockup unless the user explicitly requests an illustration.
+- Keep the screenshot readable at phone size: large hero title, visible controls, and at least one real section/item area.
+- If multiple screenshots are needed, use a carousel rhythm: cover, feature detail, usage/install.
 
 ## Final QA
 

@@ -358,6 +358,7 @@ def render_html(
     nav_html = "\n".join(nav_links)
     sections_html = "\n".join(section_cards)
     subtitle = normalized["subtitle"] or "A presentation-ready knowledge checklist."
+    total_items = sum(len(section["items"]) for section in normalized["sections"])
 
     return f"""<!DOCTYPE html>
 <html lang="{esc(lang)}">
@@ -368,17 +369,19 @@ def render_html(
   <style>
     :root {{
       color-scheme: light;
-      --ink: #19212f;
-      --muted: #627083;
-      --line: #d9e0ea;
-      --paper: #fffdf8;
-      --paper-strong: #ffffff;
-      --accent: #d65f3a;
-      --accent-dark: #9e3f28;
-      --teal: #0c7a74;
-      --gold: #c7912f;
-      --shadow: 0 24px 70px rgba(24, 33, 47, .13);
-      --radius: 8px;
+      --ink: #111111;
+      --muted: #6f6b64;
+      --line: #dfd8cf;
+      --line-strong: #cfc6ba;
+      --paper: #f7f3eb;
+      --paper-strong: #fffefa;
+      --surface: #fdfaf4;
+      --accent: #b75d3d;
+      --accent-dark: #7e3d2b;
+      --teal: #0d6f69;
+      --gold: #9e7b3c;
+      --shadow: 0 18px 44px rgba(21, 18, 14, .08);
+      --radius: 6px;
     }}
     * {{ box-sizing: border-box; }}
     html {{ scroll-behavior: smooth; }}
@@ -386,8 +389,9 @@ def render_html(
       margin: 0;
       color: var(--ink);
       background:
-        linear-gradient(180deg, rgba(255, 253, 248, .98), rgba(247, 250, 252, .98)),
-        radial-gradient(circle at top left, rgba(214, 95, 58, .13), transparent 36rem);
+        linear-gradient(90deg, rgba(17, 17, 17, .035) 1px, transparent 1px),
+        linear-gradient(180deg, var(--paper), #fbfaf7);
+      background-size: 24px 24px, auto;
       font-family: "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
       line-height: 1.62;
     }}
@@ -396,42 +400,51 @@ def render_html(
       top: 0;
       left: 0;
       z-index: 20;
-      height: 4px;
+      height: 3px;
       width: 0;
-      background: linear-gradient(90deg, var(--accent), var(--teal));
-      box-shadow: 0 0 18px rgba(214, 95, 58, .45);
+      background: var(--ink);
     }}
     .hero {{
-      min-height: 72vh;
+      min-height: clamp(560px, 46vh, 780px);
       display: grid;
       align-items: end;
-      padding: 72px max(24px, 8vw) 56px;
-      background:
-        linear-gradient(135deg, rgba(25, 33, 47, .94), rgba(38, 58, 70, .9)),
-        linear-gradient(45deg, rgba(214, 95, 58, .24), rgba(12, 122, 116, .24));
-      color: #fff;
+      padding: 42px max(24px, 7vw) 52px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(253, 250, 244, .82);
+      color: var(--ink);
     }}
-    .hero-inner {{ max-width: 1060px; }}
-    .eyebrow {{
-      margin: 0 0 18px;
-      color: #f0bd8a;
+    .hero-inner {{
+      width: min(1180px, 100%);
+      margin: 0 auto;
+    }}
+    .hero-meta {{
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: clamp(34px, 6vh, 72px);
+      color: var(--muted);
       font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0;
       text-transform: uppercase;
+      letter-spacing: .04em;
+    }}
+    .hero-meta span {{
+      padding-top: 10px;
+      border-top: 1px solid var(--ink);
     }}
     h1 {{
-      max-width: 980px;
+      max-width: 1080px;
       margin: 0;
-      font-size: clamp(42px, 7vw, 92px);
-      line-height: .98;
-      letter-spacing: 0;
+      font-size: clamp(54px, 9vw, 132px);
+      font-weight: 800;
+      line-height: .88;
+      letter-spacing: -.02em;
     }}
     .hero p {{
-      max-width: 760px;
-      margin: 24px 0 0;
-      color: rgba(255, 255, 255, .84);
-      font-size: 20px;
+      max-width: 800px;
+      margin: 32px 0 0 auto;
+      color: var(--muted);
+      font-size: clamp(18px, 2.1vw, 26px);
+      line-height: 1.38;
     }}
     .toolbar {{
       position: sticky;
@@ -439,73 +452,77 @@ def render_html(
       z-index: 10;
       display: grid;
       grid-template-columns: minmax(220px, 1fr) auto auto;
-      gap: 12px;
+      gap: 10px;
       align-items: center;
-      padding: 14px max(18px, 6vw);
+      padding: 16px max(18px, 6vw);
       border-bottom: 1px solid var(--line);
-      background: rgba(255, 253, 248, .92);
-      backdrop-filter: blur(14px);
+      background: rgba(247, 243, 235, .86);
+      backdrop-filter: blur(18px);
     }}
     .search-field {{
       width: 100%;
-      min-height: 42px;
-      padding: 10px 14px;
+      min-height: 46px;
+      padding: 11px 14px;
       color: var(--ink);
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: var(--paper-strong);
+      background: rgba(255, 254, 250, .88);
       font: inherit;
     }}
     .toolbar-button, .section-toggle, .copy-item, .tag-chip {{
-      min-height: 38px;
+      min-height: 42px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: #fff;
+      background: rgba(255, 254, 250, .9);
       color: var(--ink);
       font: inherit;
       cursor: pointer;
     }}
-    .toolbar-button, .section-toggle, .copy-item {{ padding: 8px 12px; }}
+    .toolbar-button, .section-toggle, .copy-item {{ padding: 8px 13px; }}
     .page-shell {{
       display: grid;
-      grid-template-columns: 240px minmax(0, 1fr);
-      gap: 42px;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 52px;
       width: min(1180px, calc(100% - 44px));
       margin: 0 auto;
-      padding: 44px 0 76px;
+      padding: 54px 0 88px;
     }}
     .toc {{
       position: sticky;
       top: 86px;
       align-self: start;
-      padding: 18px;
+      padding: 20px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: rgba(255, 255, 255, .72);
+      background: rgba(253, 250, 244, .76);
+      box-shadow: 0 12px 30px rgba(21, 18, 14, .04);
     }}
     .toc h2 {{
       margin: 0 0 12px;
-      font-size: 14px;
+      font-size: 13px;
       color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .04em;
     }}
     .toc a {{
       display: block;
-      padding: 8px 0;
+      padding: 10px 0;
       color: var(--ink);
       text-decoration: none;
-      border-top: 1px solid rgba(217, 224, 234, .7);
+      border-top: 1px solid rgba(207, 198, 186, .72);
     }}
     .content-flow {{ min-width: 0; }}
     .tag-bar {{
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 24px;
+      gap: 9px;
+      margin-bottom: 28px;
     }}
     .tag-chip {{
-      padding: 7px 10px;
+      padding: 8px 11px;
       color: var(--teal);
-      border-color: rgba(12, 122, 116, .22);
+      border-color: rgba(13, 111, 105, .24);
+      background: rgba(253, 250, 244, .7);
     }}
     .tag-chip.is-active {{
       color: #fff;
@@ -513,11 +530,11 @@ def render_html(
       border-color: var(--teal);
     }}
     .section-card, .support-block {{
-      margin-bottom: 30px;
-      padding: clamp(22px, 4vw, 40px);
+      margin-bottom: 26px;
+      padding: clamp(24px, 4vw, 44px);
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: var(--paper-strong);
+      background: rgba(255, 254, 250, .88);
       box-shadow: var(--shadow);
     }}
     .section-heading {{
@@ -525,24 +542,26 @@ def render_html(
       gap: 20px;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 22px;
+      margin-bottom: 26px;
     }}
     .section-kicker {{
       margin: 0 0 8px;
-      color: var(--gold);
-      font-size: 13px;
-      font-weight: 700;
+      color: var(--accent-dark);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .05em;
     }}
     .section-heading h2, .support-block h2 {{
       margin: 0;
-      font-size: clamp(26px, 4vw, 44px);
-      line-height: 1.08;
-      letter-spacing: 0;
+      font-size: clamp(30px, 4.6vw, 58px);
+      line-height: .96;
+      letter-spacing: -.015em;
     }}
     .knowledge-list {{
       list-style: none;
       display: grid;
-      gap: 12px;
+      gap: 10px;
       margin: 0;
       padding: 0;
     }}
@@ -551,30 +570,31 @@ def render_html(
       grid-template-columns: auto minmax(0, 1fr) auto;
       gap: 14px;
       align-items: start;
-      padding: 16px;
-      border: 1px solid rgba(217, 224, 234, .86);
+      padding: 18px 16px;
+      border: 1px solid rgba(207, 198, 186, .82);
       border-radius: var(--radius);
-      background: linear-gradient(180deg, #fff, #fbfcfe);
+      background: rgba(255, 254, 250, .76);
     }}
     .knowledge-item.is-hidden, .section-card.is-hidden {{ display: none; }}
     .check-wrap input {{ position: absolute; opacity: 0; pointer-events: none; }}
     .custom-check {{
       display: inline-grid;
       place-items: center;
-      width: 22px;
-      height: 22px;
+      width: 21px;
+      height: 21px;
       margin-top: 3px;
-      border: 2px solid var(--teal);
-      border-radius: 6px;
+      border: 1.5px solid var(--teal);
+      border-radius: 5px;
     }}
     .check-wrap input:checked + .custom-check {{
-      background: var(--teal);
+      background: var(--ink);
       box-shadow: inset 0 0 0 4px #fff;
     }}
     .item-text {{
       margin: 0;
       overflow-wrap: anywhere;
       font-size: 17px;
+      line-height: 1.48;
     }}
     .item-tags, .section-tags {{
       display: flex;
@@ -586,20 +606,22 @@ def render_html(
       display: inline-flex;
       padding: 2px 7px;
       border-radius: 999px;
-      background: rgba(12, 122, 116, .1);
+      background: rgba(13, 111, 105, .09);
       color: var(--teal);
       font-size: 12px;
     }}
     mark {{
       padding: 0 3px;
       border-radius: 4px;
-      background: rgba(199, 145, 47, .25);
+      background: rgba(183, 93, 61, .18);
       color: inherit;
     }}
     .section-card.is-collapsed .knowledge-list {{ display: none; }}
     .support-block ul, .support-block ol {{ margin-bottom: 0; }}
     @media (max-width: 820px) {{
-      .hero {{ min-height: 58vh; padding: 56px 22px 38px; }}
+      .hero {{ min-height: auto; padding: 34px 22px 42px; }}
+      .hero-meta {{ margin-bottom: 52px; font-size: 11px; }}
+      h1 {{ font-size: clamp(48px, 13vw, 76px); }}
       .hero p {{ font-size: 17px; }}
       .toolbar {{ grid-template-columns: 1fr; }}
       .page-shell {{ grid-template-columns: 1fr; width: min(100% - 28px, 680px); gap: 22px; }}
@@ -623,7 +645,10 @@ def render_html(
   <div class="reading-progress" aria-hidden="true"></div>
   <header class="hero">
     <div class="hero-inner">
-      <p class="eyebrow">Interactive Knowledge Showcase</p>
+      <div class="hero-meta">
+        <span>Interactive Knowledge Showcase</span>
+        <span>{len(normalized["sections"]):02d} sections / {total_items:02d} items</span>
+      </div>
       <h1>{esc(normalized["title"])}</h1>
       <p>{esc(subtitle)}</p>
     </div>

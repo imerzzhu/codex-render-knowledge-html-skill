@@ -7,7 +7,7 @@ The generated HTML works as a single local file. It includes inline CSS and Java
 ## What It Generates
 
 - Presentation-style longform page.
-- Strong hero section for direct display.
+- Premium minimalist editorial cover for direct display.
 - Sticky search and print controls.
 - Table of contents.
 - Tag filtering.
@@ -16,6 +16,10 @@ The generated HTML works as a single local file. It includes inline CSS and Java
 - Copy buttons per item.
 - Reading progress bar.
 - Print-friendly CSS.
+
+## Visual Direction
+
+The default theme is a minimal presentation long page: light paper canvas, strong black typography, thin rules, restrained copper labels, and teal interaction states. It is designed to work as a real browser surface for live display, printing, and 1080x1920 graphic screenshots.
 
 ## Install
 
@@ -111,10 +115,26 @@ python $validator ".\skills\render-knowledge-html"
 
 For visual QA, generate an HTML file and open it in a browser at desktop and mobile widths. Check search, tag filtering, collapse, checklist persistence, copy, and print controls.
 
+## Promo Example
+
+The repository includes a structured promo source at `promo/showcase/render-knowledge-html-promo.json`. Generate it with:
+
+```powershell
+python .\skills\render-knowledge-html\scripts\render_knowledge_html.py `
+  --input .\promo\showcase\render-knowledge-html-promo.json `
+  --format json `
+  --output .\output\promo\render-knowledge-html-showcase.html `
+  --lang zh-CN
+```
+
+Capture real rendered screenshots at 1080x1920 for Douyin/Xiaohongshu-style graphic posts. Generated screenshots and HTML remain ignored local artifacts by default.
+
 ## Project Structure
 
 ```text
 .
+|-- promo/showcase/
+|   `-- render-knowledge-html-promo.json
 |-- skills/
 |   `-- render-knowledge-html/
 |       |-- SKILL.md
