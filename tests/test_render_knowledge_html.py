@@ -1,0 +1,168 @@
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+import pytest
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SCRIPT_DIR = ROOT / "skills" / "render-knowledge-html" / "scripts"
+SCRIPT = SCRIPT_DIR / "render_knowledge_html.py"
+sys.path.insert(0, str(SCRIPT_DIR))
+
+from render_knowledge_html import (  # noqa: E402
+    load_knowledge,
+    parse_markdown,
+    render_html,
+    slugify_unique,
+)
+
+
+def test_markdown_parser_extracts_title_subtitle_sections_items_tags():
+    markdown = """# AI Research Checklist
+> A compact guide for source-grounded answers.
+
+## Search Strategy
+Tags: research, citation
+
+- [ ] Verify source dates #freshness
+- Prefer official documentation #primary-source
+- Capture direct links
+
+## Delivery
+- Put the HTML path first #handoff
+"""
+
+    data = parse_markdown(markdown)
+
+    assert data["title"] == "AI Research Checklist"
+    assert data["subtitle"] == "A compact guide for source-grounded answers."
+    assert data["tags"] == ["research", "citation", "freshness", "primary-source", "handoff"]
+    assert [section["title"] for section in data["sections"]] == ["Search Strategy", "Delivery"]
+    assert data["sections"][0]["items"][0] == {
+        "text": "Verify source dates",
+        "checked": False,
+        "tags": ["freshness"],
+    }
+    assert data["sections"][0]["items"][1]["tags"] == ["primary-source"]
+    assert data["sections"][1]["items"][0]["text"] == "Put the HTML path first"
+
+
+def test_markdown_parser_accepts_utf8_bom():
+    data = parse_markdown("\ufeff# BOM Title\n\n## First Section\n- Works")
+
+    assert data["title"] == "BOM Title"
+    assert data["sections"][0]["title"] == "First Section"
+
+
+def test_json_loader_validates_required_fields_and_normalizes_items(tmp_path):
+    input_file = tmp_path / "knowledge.json"
+    input_file.write_text(
+        json.dumps(
+            {
+                "title": "学习路径",
+                "sections": [
+                    {
+                        "title": "第一阶段",
+                        "items": [
+                            "读官方文档",
+                            {"text": "做一个示例", "tags": ["practice"], "checked": True},
+                        ],
+                    }
+                ],
+                "actions": ["Open in browser"],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    data = load_knowledge(input_file, "json")
+
+    assert data["title"] == "学习路径"
+    assert data["sections"][0]["items"][0] == {"text": "读官方文档", "checked": False, "tags": []}
+    assert data["sections"][0]["items"][1] == {"text": "做一个示例", "checked": True, "tags": ["practice"]}
+    assert data["actions"] == ["Open in browser"]
+
+
+def test_json_loader_rejects_missing_sections(tmp_path):
+    input_file = tmp_path / "bad.json"
+    input_file.write_text(json.dumps({"title": "Broken"}), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="sections"):
+        load_knowledge(input_file, "json")
+
+
+def test_render_html_escapes_content_and_contains_no_external_assets():
+    html = render_html(
+        {
+            "title": "Security <script>alert(1)</script>",
+            "subtitle": "No CDN output",
+            "tags": ["safe"],
+            "sections": [
+                {
+                    "title": "Inputs",
+                    "items": [
+                        {
+                            "text": 'Escape <b>bold</b> & "quotes"',
+                            "checked": False,
+                            "tags": ["safe"],
+                        }
+                    ],
+                }
+            ],
+            "sources": [{"label": "Docs", "url": "https://developers.openai.com/codex/skills"}],
+        }
+    )
+
+    assert "<script>alert(1)</script>" not in html
+    assert "Security &lt;script&gt;alert(1)&lt;/script&gt;" in html
+    assert "Escape &lt;b&gt;bold&lt;/b&gt; &amp; &quot;quotes&quot;" in html
+    assert "script src=" not in html.lower()
+    assert "link href=" not in html.lower()
+    assert "localStorage" in html
+    assert "reading-progress" in html
+    assert "knowledge-search" in html
+    assert "data-tags=\"safe\"" in html
+
+
+def test_slugify_unique_stabilizes_duplicates_and_non_latin_titles():
+    used = set()
+
+    assert slugify_unique("Search Strategy", used) == "search-strategy"
+    assert slugify_unique("Search Strategy", used) == "search-strategy-2"
+    assert slugify_unique("第一阶段", used).startswith("section-")
+
+
+def test_cli_writes_html_file_from_markdown(tmp_path):
+    input_file = tmp_path / "input.md"
+    output_file = tmp_path / "showcase.html"
+    input_file.write_text(
+        "# Tooling Notes\n\n## Setup\n- [ ] Check versions #setup\n",
+        encoding="utf-8",
+    )
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPT),
+            "--input",
+            str(input_file),
+            "--format",
+            "markdown",
+            "--output",
+            str(output_file),
+            "--subtitle",
+            "Generated by tests",
+        ],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
+    html = output_file.read_text(encoding="utf-8")
+    assert "Tooling Notes" in html
+    assert "Generated by tests" in html
+    assert "Check versions" in html

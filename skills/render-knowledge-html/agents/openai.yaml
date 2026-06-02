@@ -1,0 +1,4 @@
+interface:
+  display_name: "Render Knowledge HTML"
+  short_description: "Turn knowledge checklists into polished interactive HTML"
+  default_prompt: "Use $render-knowledge-html to turn this knowledge checklist into a polished interactive HTML showcase."
