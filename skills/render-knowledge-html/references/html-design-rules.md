@@ -7,6 +7,9 @@ Use these rules when generating or revising the `presentation-longform` HTML out
 - Build an editorial long page for presentation and reading, not a dashboard.
 - Default to a premium minimalist international UI style: Swiss editorial hierarchy, strong typography, disciplined spacing, and quiet product controls.
 - Use a light paper canvas with black ink, thin lines, restrained copper accents, and teal only for interaction/state.
+- Use Apple-inspired glass material sparingly for navigation, controls, and content surfaces: translucent light fills, blur, subtle saturation, inset highlights, and soft shadows.
+- Use rounded, continuous edges by default. Prefer pill controls, softly rounded cards, and curved checklist boxes over sharp rectangular corners.
+- Keep glass effects behind readable text only when contrast remains strong; if the content looks washed out, increase the surface opacity before adding more blur.
 - Use a strong first viewport with the title, subtitle, and compact metadata. The first screen should feel like a designed publication cover, not a generic SaaS hero.
 - Avoid decorative blobs, heavy gradients, dark tech backgrounds, stock-like backgrounds, fake metrics, and card-heavy landing-page composition.
 - Treat the HTML itself as the product screenshot: real search, tags, checklist, copy, and print controls should be visible and refined.

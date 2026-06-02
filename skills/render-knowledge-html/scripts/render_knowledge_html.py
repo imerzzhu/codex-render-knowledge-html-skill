@@ -380,8 +380,14 @@ def render_html(
       --accent-dark: #7e3d2b;
       --teal: #0d6f69;
       --gold: #9e7b3c;
+      --glass: rgba(255, 254, 250, .54);
+      --glass-strong: rgba(255, 254, 250, .74);
+      --glass-line: rgba(255, 255, 255, .76);
+      --glass-shadow: 0 22px 64px rgba(45, 38, 28, .13), inset 0 1px 0 rgba(255, 255, 255, .92), inset 0 -1px 0 rgba(107, 92, 73, .08);
       --shadow: 0 18px 44px rgba(21, 18, 14, .08);
-      --radius: 6px;
+      --radius: 22px;
+      --radius-sm: 14px;
+      --radius-lg: 34px;
     }}
     * {{ box-sizing: border-box; }}
     html {{ scroll-behavior: smooth; }}
@@ -390,8 +396,9 @@ def render_html(
       color: var(--ink);
       background:
         linear-gradient(90deg, rgba(17, 17, 17, .035) 1px, transparent 1px),
+        linear-gradient(135deg, rgba(255, 255, 255, .76), rgba(255, 255, 255, 0) 46%),
         linear-gradient(180deg, var(--paper), #fbfaf7);
-      background-size: 24px 24px, auto;
+      background-size: 24px 24px, auto, auto;
       font-family: "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
       line-height: 1.62;
     }}
@@ -409,8 +416,7 @@ def render_html(
       display: grid;
       align-items: end;
       padding: 42px max(24px, 7vw) 52px;
-      border-bottom: 1px solid var(--line);
-      background: rgba(253, 250, 244, .82);
+      background: linear-gradient(180deg, rgba(253, 250, 244, .72), rgba(253, 250, 244, .44));
       color: var(--ink);
     }}
     .hero-inner {{
@@ -428,8 +434,13 @@ def render_html(
       letter-spacing: .04em;
     }}
     .hero-meta span {{
-      padding-top: 10px;
-      border-top: 1px solid var(--ink);
+      padding: 9px 13px;
+      border: 1px solid rgba(255, 255, 255, .7);
+      border-radius: 999px;
+      background: rgba(255, 254, 250, .42);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .78);
+      backdrop-filter: blur(18px) saturate(1.35);
+      -webkit-backdrop-filter: blur(18px) saturate(1.35);
     }}
     h1 {{
       max-width: 1080px;
@@ -448,33 +459,40 @@ def render_html(
     }}
     .toolbar {{
       position: sticky;
-      top: 0;
+      top: 12px;
       z-index: 10;
       display: grid;
       grid-template-columns: minmax(220px, 1fr) auto auto;
       gap: 10px;
       align-items: center;
+      width: min(1180px, calc(100% - 44px));
+      margin: -28px auto 0;
       padding: 16px max(18px, 6vw);
-      border-bottom: 1px solid var(--line);
-      background: rgba(247, 243, 235, .86);
-      backdrop-filter: blur(18px);
+      border: 1px solid var(--glass-line);
+      border-radius: var(--radius-lg);
+      background: var(--glass);
+      box-shadow: var(--glass-shadow);
+      backdrop-filter: blur(28px) saturate(1.5);
+      -webkit-backdrop-filter: blur(28px) saturate(1.5);
     }}
     .search-field {{
       width: 100%;
       min-height: 46px;
       padding: 11px 14px;
       color: var(--ink);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: rgba(255, 254, 250, .88);
+      border: 1px solid rgba(255, 255, 255, .72);
+      border-radius: 999px;
+      background: rgba(255, 254, 250, .64);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .78);
       font: inherit;
     }}
     .toolbar-button, .section-toggle, .copy-item, .tag-chip {{
       min-height: 42px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: rgba(255, 254, 250, .9);
+      border: 1px solid rgba(255, 255, 255, .72);
+      border-radius: 999px;
+      background: rgba(255, 254, 250, .62);
       color: var(--ink);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .82), 0 8px 18px rgba(38, 31, 23, .05);
       font: inherit;
       cursor: pointer;
     }}
@@ -492,10 +510,12 @@ def render_html(
       top: 86px;
       align-self: start;
       padding: 20px;
-      border: 1px solid var(--line);
+      border: 1px solid var(--glass-line);
       border-radius: var(--radius);
-      background: rgba(253, 250, 244, .76);
-      box-shadow: 0 12px 30px rgba(21, 18, 14, .04);
+      background: rgba(255, 254, 250, .48);
+      box-shadow: var(--glass-shadow);
+      backdrop-filter: blur(24px) saturate(1.35);
+      -webkit-backdrop-filter: blur(24px) saturate(1.35);
     }}
     .toc h2 {{
       margin: 0 0 12px;
@@ -521,8 +541,10 @@ def render_html(
     .tag-chip {{
       padding: 8px 11px;
       color: var(--teal);
-      border-color: rgba(13, 111, 105, .24);
-      background: rgba(253, 250, 244, .7);
+      border-color: rgba(255, 255, 255, .72);
+      background: rgba(255, 254, 250, .48);
+      backdrop-filter: blur(18px) saturate(1.3);
+      -webkit-backdrop-filter: blur(18px) saturate(1.3);
     }}
     .tag-chip.is-active {{
       color: #fff;
@@ -532,10 +554,12 @@ def render_html(
     .section-card, .support-block {{
       margin-bottom: 26px;
       padding: clamp(24px, 4vw, 44px);
-      border: 1px solid var(--line);
+      border: 1px solid var(--glass-line);
       border-radius: var(--radius);
-      background: rgba(255, 254, 250, .88);
-      box-shadow: var(--shadow);
+      background: var(--glass-strong);
+      box-shadow: var(--glass-shadow);
+      backdrop-filter: blur(22px) saturate(1.35);
+      -webkit-backdrop-filter: blur(22px) saturate(1.35);
     }}
     .section-heading {{
       display: flex;
@@ -571,9 +595,10 @@ def render_html(
       gap: 14px;
       align-items: start;
       padding: 18px 16px;
-      border: 1px solid rgba(207, 198, 186, .82);
-      border-radius: var(--radius);
-      background: rgba(255, 254, 250, .76);
+      border: 1px solid rgba(255, 255, 255, .72);
+      border-radius: var(--radius-sm);
+      background: rgba(255, 254, 250, .54);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .72);
     }}
     .knowledge-item.is-hidden, .section-card.is-hidden {{ display: none; }}
     .check-wrap input {{ position: absolute; opacity: 0; pointer-events: none; }}
@@ -584,7 +609,9 @@ def render_html(
       height: 21px;
       margin-top: 3px;
       border: 1.5px solid var(--teal);
-      border-radius: 5px;
+      border-radius: 8px;
+      background: rgba(255, 254, 250, .5);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8);
     }}
     .check-wrap input:checked + .custom-check {{
       background: var(--ink);
@@ -606,7 +633,7 @@ def render_html(
       display: inline-flex;
       padding: 2px 7px;
       border-radius: 999px;
-      background: rgba(13, 111, 105, .09);
+      background: rgba(13, 111, 105, .1);
       color: var(--teal);
       font-size: 12px;
     }}
